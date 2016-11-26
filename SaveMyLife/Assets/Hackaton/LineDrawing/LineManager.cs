@@ -21,7 +21,7 @@ public class LineManager : MonoBehaviour {
     private List<VectorLine> backUpLines;
     public Canvas canvas;
     public float width;
-    public Material material;
+    public Texture texture;
 
     public Color LineColor;
 
@@ -45,7 +45,7 @@ public class LineManager : MonoBehaviour {
         if (Input.GetButtonDown("mouse 0"))
         {
             //GameObject line = new GameObject("line_"+index);
-            VectorLine line = new VectorLine("line_" + index, new List<Vector2>(), width, LineType.Continuous);
+            VectorLine line = new VectorLine("line_" + index, new List<Vector2>(), texture, width, LineType.Continuous, Joins.None);
 
             //Vector2 pos;
             //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
@@ -53,7 +53,6 @@ public class LineManager : MonoBehaviour {
             ////transform.position = myCanvas.transform.TransformPoint(pos);
             line.points2.Add(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
             line.color = LineColor;
-            line.material = material;
 
             vectorLines.Add(line);
         }
@@ -115,7 +114,7 @@ public class LineManager : MonoBehaviour {
         if (vectorLines != null && vectorLines.Count>0)
         {
             VectorLine objectToDestroy = vectorLines[index - 1];
-            VectorLine backupLine = new VectorLine(objectToDestroy.name, objectToDestroy.points2, objectToDestroy.lineWidth, objectToDestroy.lineType);
+            VectorLine backupLine = new VectorLine(objectToDestroy.name, objectToDestroy.points2, texture, objectToDestroy.lineWidth, objectToDestroy.lineType, Joins.None);
             
             backUpLines.Add(backupLine);
             VectorLine.Destroy(ref objectToDestroy);
@@ -130,7 +129,6 @@ public class LineManager : MonoBehaviour {
         {
             VectorLine lineToRestore = backUpLines[backUpLines.Count-1];
             lineToRestore.color = LineColor;
-            lineToRestore.material = material;
             vectorLines.Add(lineToRestore);
 
             lineToRestore.Draw();
