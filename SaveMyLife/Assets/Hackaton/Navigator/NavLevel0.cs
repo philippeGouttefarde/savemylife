@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class NavLevel0 : MonoBehaviour
 {
 
-    public float waitingTimeInSecond = 3;
+    public float waitingTimeInSecond = 5;
 
     private void Start()
     {
@@ -23,6 +24,6 @@ public class NavLevel0 : MonoBehaviour
 
     public void GoToLevel1 ()
 	{
-		Application.LoadLevel ("1_Call");
+        SceneManager.LoadScene("1_Call");
 	}
 }

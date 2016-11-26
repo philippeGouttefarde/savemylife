@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class NavLevel1 : MonoBehaviour
 {
 
 	public void BackToLevel0 ()
 	{
-		Application.LoadLevel ("0_Home");
+        SceneManager.LoadScene("0_Home");
 	}
 
     public void BackToLevel2()
     {
-        Application.LoadLevel("2_Video");
+        SceneManager.LoadScene("2_Video");
     }
 }

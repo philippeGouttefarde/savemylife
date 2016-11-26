@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIAnimatorLevel1 : MonoBehaviour
@@ -10,6 +11,8 @@ public class UIAnimatorLevel1 : MonoBehaviour
     public string T2 = "Appel en cours..";
     public string T3 = "Appel en cours...";
     public string T4 = "Appel en cours....";
+
+    public Text currentTimeTxt;
 
     private void Start()
     {
@@ -25,8 +28,6 @@ public class UIAnimatorLevel1 : MonoBehaviour
             float currentTime = Time.time;
             currentTime -= (int)currentTime;
 
-            Debug.Log("currentTime : " + currentTime);
-
             if (currentTime <= 0.25f)
             {
                 inCallText.text = T1;
@@ -41,12 +42,13 @@ public class UIAnimatorLevel1 : MonoBehaviour
             {
                 inCallText.text = T4;
             }
-            Debug.Log("inCallText.text : " + inCallText.text);
+
+            currentTimeTxt.text = System.DateTime.UtcNow.ToString();
         }
     }
 
     public void GoToLevel1 ()
 	{
-		Application.LoadLevel ("1_Call");
+		SceneManager.LoadScene ("1_Call");
 	}
 }
