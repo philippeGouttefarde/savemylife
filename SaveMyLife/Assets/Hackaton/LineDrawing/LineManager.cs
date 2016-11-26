@@ -6,17 +6,27 @@ using UnityEngine.EventSystems;
 
 public class LineManager : MonoBehaviour {
 
+    public enum MODE { DRAW, CUT }
+
+    private MODE currentMode = MODE.DRAW;
+
+    #region INTERACTOR
+
+    #endregion
+
+    #region DRAWLINE
     private Vector3 previousMousePosition;
     private int index = 0;
     private List<VectorLine> vectorLines;
     private List<VectorLine> backUpLines;
     public Canvas canvas;
     public float width;
+    public Material material;
 
     public Color LineColor;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         //VectorLine.SetLine(Color.green, new Vector2(0, 0), new Vector2(Screen.width - 1, Screen.height - 1));
         //List<Vector3> test = new List<Vector3>();
         //test.Add(new Vector2(0, 0));
@@ -29,61 +39,81 @@ public class LineManager : MonoBehaviour {
         backUpLines = new List<VectorLine>();
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (!EventSystem.current.IsPointerOverGameObject())
+
+    private void DrawLine()
+    {
+        if (Input.GetButtonDown("mouse 0"))
         {
-            if (Input.GetButtonDown("mouse 0"))
+            //GameObject line = new GameObject("line_"+index);
+            VectorLine line = new VectorLine("line_" + index, new List<Vector2>(), width, LineType.Continuous);
+
+            //Vector2 pos;
+            //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
+            line.SetCanvas(canvas);
+            ////transform.position = myCanvas.transform.TransformPoint(pos);
+            line.points2.Add(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+            line.color = LineColor;
+            line.material = material;
+
+            vectorLines.Add(line);
+        }
+        if (Input.GetButton("mouse 0"))
+        {
+
+            //Vector2 pos;
+            //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
+            Vector3 currentPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+            print(currentPosition + "+++++" + previousMousePosition);
+            if (currentPosition != previousMousePosition)
             {
-                //GameObject line = new GameObject("line_"+index);
-                VectorLine line = new VectorLine("line_" + index, new List<Vector2>(), width, LineType.Continuous);
-
-                //Vector2 pos;
-                //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
-                line.SetCanvas(canvas);
-                ////transform.position = myCanvas.transform.TransformPoint(pos);
-                line.points2.Add(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-                line.color = LineColor;
-
-                vectorLines.Add(line);
-
+                vectorLines[index].points2.Add(currentPosition);
+                vectorLines[index].Draw();
+                print("I'm supposed to be drawing");
             }
-            if (Input.GetButton("mouse 0"))
-            {
-
-                //Vector2 pos;
-                //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, Camera.main, out pos);
-                Vector3 currentPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
-                print(currentPosition + "+++++" + previousMousePosition);
-                if (currentPosition != previousMousePosition)
-                {
-                    vectorLines[index].points2.Add(currentPosition);
-                    vectorLines[index].Draw();
-                    print("I'm supposed to be drawing");
-                }
-                previousMousePosition = currentPosition;
-            }
-
-            if (Input.GetButtonUp("mouse 0"))
-            {
-                index++;
-            }
+            previousMousePosition = currentPosition;
         }
 
+        if (Input.GetButtonUp("mouse 0"))
+        {
+            index++;
+        }
+    }
 
+    // Update is called once per frame
+    private void DragAndDropCut()
+    {
 
     }
 
+    // Update is called once per frame
+    void Update () {
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (currentMode == MODE.DRAW) {
+                DrawLine();
+            } else
+            {
+                DragAndDropCut();
+            }
+        }
+    }
 
+    private void SetCurrentModePencil()
+    {
+        this.currentMode = MODE.DRAW;
+    }
+
+
+    private void SetCurrentModeCut()
+    {
+        this.currentMode = MODE.CUT;
+    }
 
     public void undo()
     {
-        print(vectorLines.Count + " -----" + index);
         if (vectorLines != null && vectorLines.Count>0)
         {
-            print("GHKDFGOLSDFKMGOKSDFMGOKSDFMGOSDKFG");
             VectorLine objectToDestroy = vectorLines[index - 1];
             VectorLine backupLine = new VectorLine(objectToDestroy.name, objectToDestroy.points2, objectToDestroy.lineWidth, objectToDestroy.lineType);
             
@@ -100,6 +130,7 @@ public class LineManager : MonoBehaviour {
         {
             VectorLine lineToRestore = backUpLines[backUpLines.Count-1];
             lineToRestore.color = LineColor;
+            lineToRestore.material = material;
             vectorLines.Add(lineToRestore);
 
             lineToRestore.Draw();
@@ -132,5 +163,6 @@ public class LineManager : MonoBehaviour {
             index = 0;
         }
     }
+    #endregion
 
 }
